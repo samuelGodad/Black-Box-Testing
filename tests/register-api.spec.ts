@@ -1,4 +1,4 @@
-import { test, expect, request } from '@playwright/test';
+import { test as base, expect, request } from '@playwright/test';
 
 const baseURL = 'https://reqres.in/api';
 
@@ -6,6 +6,9 @@ const headers = {
   'Content-Type': 'application/json',
   'x-api-key': 'reqres-free-v1'
 };
+const test = base.extend({
+    browserName: 'chromium' // Runs only in Chromium
+  });
 
 const testCases = [
   {
@@ -47,6 +50,11 @@ test.describe('Equivalence Partitioning - Reqres Registration', () => {
         headers,
         data: tc.payload
       });
+      const status = response.status();
+      const result = status === tc.expectedStatus ? '✅ PASSED' : '❌ FAILED';
+      console.log(`${tc.id} - ${tc.description} - ${result}`);
+      console.log(`Expected: ${tc.expectedStatus}, Received: ${status}`);
+      console.log(`Result: ${result}\n`);
       expect(response.status()).toBe(tc.expectedStatus);
     });
   }
